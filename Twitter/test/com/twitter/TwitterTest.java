@@ -20,7 +20,6 @@ import com.twitter.poruke.TwitterPoruka;
 public class TwitterTest {
 
 	private Twitter t;
-	private int brojPoruka = 40;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -28,10 +27,6 @@ public class TwitterTest {
 	@Before
 	public void setUp() throws Exception {
 		t = new Twitter();
-		
-		for (int i = 0; i < brojPoruka; i++) {
-			t.unesi("Jeca", "Poyy");
-		}
 	}
 
 	/**
@@ -47,7 +42,18 @@ public class TwitterTest {
 	 */
 	@Test
 	public void testVratiSvePoruke() {
-		assertEquals(brojPoruka, t.vratiSvePoruke().size());
+		for (int i = 0; i < 5; i++) {
+			t.unesi("Jeca", "Poyy");
+		}
+		
+		assertEquals(5 , t.vratiSvePoruke().size());
+		
+		LinkedList<TwitterPoruka> tp = t.vratiSvePoruke();
+		
+		for(int i = 0; i < tp.size(); i++) {
+			assertEquals("Jeca", tp.get(i).getKorisnik());
+			assertEquals("Poyy", tp.get(i).getPoruka());
+		}
 	}
 
 	/**
@@ -67,7 +73,22 @@ public class TwitterTest {
 	 */
 	@Test
 	public void testVratiPoruke() {
-		assertEquals(24, t.vratiPoruke(24, "bla").length);
+		t.unesi("Jeca", "Poyy");
+		t.unesi("Mika", "Cao");
+		t.unesi("Gogi", "Poyy");
+		t.unesi("Joca", "Cao");
+		t.unesi("Sale", "Poyy");
+		
+		assertEquals(2 , t.vratiPoruke(2, "Poy").length);
+		
+		TwitterPoruka[] nizPoruka = new TwitterPoruka[2];
+		nizPoruka = t.vratiPoruke(2, "Poy");
+		
+		assertEquals("Jeca", nizPoruka[0].getKorisnik());
+		assertEquals("Poyy", nizPoruka[0].getPoruka());
+		assertEquals("Gogi", nizPoruka[1].getKorisnik());
+		assertEquals("Poyy", nizPoruka[1].getPoruka());
+		
 	}
 	
 	@Test (expected = java.lang.RuntimeException.class)
@@ -82,6 +103,11 @@ public class TwitterTest {
 	
 	@Test 
 	public void testVratiPorukeMaxBroj() {
+		
+		for (int i = 0; i < 110; i++) {
+			t.unesi("Jeca", "bla");
+		}
+		
 		assertEquals(100, t.vratiPoruke(0, "bla").length);
 	}
 
